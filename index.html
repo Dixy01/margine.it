@@ -512,14 +512,18 @@ body.started #dots{opacity:1}
     if (scenes[i].id === 's3') runCounters();
   }
 
+  function flyJet(){
+    flyby.classList.remove('go'); void flyby.offsetWidth;
+    flyby.style.top = (25 + Math.random()*45) + '%';
+    flyby.classList.add('go');
+  }
+
   function goTo(i){
     if (mobile || reduced){ scenes[i].scrollIntoView({behavior:'smooth'}); return; }
     if (lock || i===cur || i<0 || i>=scenes.length) return;
     lock = true; cur = i;
     deck.style.transform = 'translateY(-'+ (i*100) +'vh)';
-    // jet che sfreccia
-    flyby.classList.remove('go'); void flyby.offsetWidth; flyby.classList.add('go');
-    flyby.style.top = (30 + Math.random()*40) + '%';
+    flyJet();
     setTimeout(function(){ activate(i); }, 350);
     setTimeout(function(){ lock = false; }, 1150);
   }
@@ -561,14 +565,20 @@ body.started #dots{opacity:1}
 
   // ---- Mobile: attiva le scene con IntersectionObserver ----
   if (mobile || reduced){
+    var lastScene = null;
     var io = new IntersectionObserver(function(es){
       es.forEach(function(e){
         if (e.isIntersecting){
           e.target.classList.add('active');
           if (e.target.id === 's3') runCounters();
+          // jet ad ogni cambio sezione (non al primo caricamento sulla hero)
+          if (lastScene && lastScene !== e.target && document.body.classList.contains('started')){
+            flyJet();
+          }
+          lastScene = e.target;
         }
       });
-    }, {threshold:.3});
+    }, {threshold:.35});
     scenes.forEach(function(s){ io.observe(s); });
   }
 
