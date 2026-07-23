@@ -5,6 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>MARGINE — Private Lifestyle Management</title>
 <meta name="description" content="Margine. Lifestyle management privato per imprenditori. Su ammissione.">
+<meta property="og:title" content="MARGINE — Private Lifestyle Management">
+<meta property="og:description" content="Il lusso definitivo è il tempo. Assistente personale dedicato per viaggi, eventi e agende private.">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#08080A">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Jost:wght@200;300;400;500&display=swap" rel="stylesheet">
@@ -151,6 +155,20 @@ body.started #dots{opacity:1}
   position:absolute;right:100%;top:50%;width:220px;height:1px;
   background:linear-gradient(to left,var(--gold),transparent);opacity:.8;
 }
+
+/* ================= BOTTONE WHATSAPP FISSO ================= */
+#wabtn{
+  position:fixed;right:28px;bottom:28px;z-index:95;
+  width:54px;height:54px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  background:var(--gold);color:var(--black);text-decoration:none;
+  box-shadow:0 12px 34px -10px rgba(198,164,92,.6);
+  opacity:0;transform:scale(.6);transition:opacity .6s .8s,transform .6s .8s,background .3s;
+}
+body.started #wabtn{opacity:1;transform:scale(1)}
+#wabtn:hover{background:var(--gold-b)}
+#wabtn svg{width:26px;height:26px}
+@media(max-width:860px){#wabtn{right:18px;bottom:18px}}
 
 /* ================= DECK DELLE SCENE ================= */
 #deck{
@@ -324,6 +342,11 @@ body.started #dots{opacity:1}
 <!-- ============ JET DI TRANSIZIONE ============ -->
 <div id="flyby"><span class="streak"></span></div>
 
+<!-- ============ BOTTONE WHATSAPP ============ -->
+<a id="wabtn" href="https://wa.me/393755116156?text=Buongiorno%2C%20vi%20scrivo%20dal%20sito" target="_blank" rel="noopener" aria-label="Scrivici su WhatsApp">
+  <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5.1-1.3A10 10 0 1 0 12 2zm0 18.2c-1.5 0-3-.4-4.3-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.6-6.1c-.3-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1-.2.3-.7.8-.8 1-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.3-.4.7-1.3.1-.2 0-.4 0-.5l-.8-1.9c-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.5.1-.7.3-.2.3-.9.9-.9 2.2s.9 2.5 1.1 2.7c.1.2 1.8 2.8 4.4 3.9 1.6.7 2.3.8 3.1.7.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.1-1.2 0-.1-.2-.2-.5-.3z"/></svg>
+</a>
+
 <!-- ============ HEADER ============ -->
 <header>
   <a class="logo" href="#" onclick="return false">MARGINE<span>.</span></a>
@@ -423,9 +446,10 @@ body.started #dots{opacity:1}
         <div class="a d1">
           <p class="big">Scrivici due righe, con calma. Rispondiamo per iscritto, con discrezione, di solito entro poche ore.</p>
           <p>Ci racconti come vivi le tue giornate e cosa vorresti toglierti dalla testa; ti rispondiamo con una proposta concreta. Tutto via messaggio, senza telefonate: al tuo ritmo.</p>
-          <p>Contatto diretto: <a class="mail" href="https://wa.me/390000000000">WhatsApp</a> · <a class="mail" href="mailto:luca.borrelli09@gmail.com">Email</a></p>
+          <p>Contatto diretto: <a class="mail" href="https://wa.me/393755116156">WhatsApp</a> · <a class="mail" href="mailto:luca.borrelli09@gmail.com">Email</a></p>
         </div>
         <form class="aform a d2" id="aform">
+          <input type="text" id="hp" name="_honey" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px;opacity:0" aria-hidden="true">
           <div class="field"><input type="text" id="fn" placeholder=" " required><label for="fn">Nome e cognome</label></div>
           <div class="field"><input type="text" id="fc" placeholder=" " required><label for="fc">Email o telefono</label></div>
           <p class="form-err" id="ferr">Inserisci un'email valida (es. nome@dominio.it) o un numero di telefono corretto.</p>
@@ -543,9 +567,11 @@ body.started #dots{opacity:1}
     }
   }, {passive:true});
 
-  // tastiera
+  // tastiera (ignorata quando si scrive nei campi del modulo)
   addEventListener('keydown', function(e){
     if (mobile || reduced) return;
+    var tag = (e.target.tagName || '').toLowerCase();
+    if (tag === 'input' || tag === 'textarea') return;
     if (['ArrowDown','PageDown',' '].indexOf(e.key) > -1){ e.preventDefault(); goTo(cur+1); }
     if (['ArrowUp','PageUp'].indexOf(e.key) > -1){ e.preventDefault(); goTo(cur-1); }
   });
@@ -612,6 +638,7 @@ body.started #dots{opacity:1}
   }
   document.getElementById('aform').addEventListener('submit', function(e){
     e.preventDefault();
+    if (document.getElementById('hp').value) return; // bot: campo nascosto compilato
     var f = e.target;
     var err = document.getElementById('ferr');
     var contatto = document.getElementById('fc').value;
