@@ -265,6 +265,7 @@ body.started #dots{opacity:1}
 .field textarea:focus + label,.field textarea:not(:placeholder-shown) + label{top:0;font-size:9.5px;color:var(--gold)}
 .aform .btn{margin-top:34px}
 .form-ok{display:none;margin-top:24px;border:1px solid var(--line);padding:18px;font-size:14px;color:var(--gold-b);font-weight:200}
+.form-err{display:none;margin-top:14px;font-size:13px;color:#E08A7A;font-weight:300;letter-spacing:.03em}
 .foot{
   position:absolute;bottom:26px;left:0;right:0;text-align:center;
   font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:rgba(239,234,224,.35);
@@ -329,7 +330,7 @@ body.started #dots{opacity:1}
   <ul class="navlinks">
     <li><button data-go="1">La collezione</button></li>
     <li><button data-go="4">Membership</button></li>
-    <li><button data-go="5">Richiedi l'ammissione</button></li>
+    <li><button data-go="5">Contattaci</button></li>
   </ul>
 </header>
 
@@ -347,7 +348,7 @@ body.started #dots{opacity:1}
       <h1 class="a d1">Il lusso definitivo<br>è <em>il tempo</em>.</h1>
       <p class="lead a d2">Margine è il family office del tuo tempo privato. Un assistente personale dedicato orchestra viaggi, eventi e impegni della tua vita — con la discrezione di chi non deve farsi notare e la precisione di chi non può sbagliare.</p>
       <div class="acts a d3">
-        <button class="btn" data-go="5">Richiedi l'ammissione</button>
+        <button class="btn" data-go="5">Contattaci ora</button>
       </div>
     </div>
     <div class="hint">Scorri</div>
@@ -398,17 +399,17 @@ body.started #dots{opacity:1}
         <div class="tier a d1">
           <p class="tn">Accesso</p><h3>Réserve</h3><p class="fr">da 900 € / mese</p>
           <ul><li>Assistente personale dedicato</li><li>Agenda privata e appuntamenti</li><li>Commissioni su misura</li><li>Risposta entro 4 ore</li></ul>
-          <button class="btn" data-go="5">Candidati</button>
+          <button class="btn" data-go="5">Contattaci ora</button>
         </div>
         <div class="tier sig a d2">
           <p class="tn">La firma</p><h3>Signature</h3><p class="fr">da 2.400 € / mese</p>
           <ul><li>Tutto Réserve, senza limiti d'ambito</li><li>Viaggi ed eventi con regia completa</li><li>Risposta entro 2 ore, 7 su 7</li><li>Gestione estesa alla famiglia</li><li>Presenza in loco alle grandi occasioni</li></ul>
-          <button class="btn" data-go="5">Richiedi l'invito</button>
+          <button class="btn" data-go="5">Contattaci ora</button>
         </div>
         <div class="tier a d3">
-          <p class="tn">Oltre</p><h3>Privé</h3><p class="fr">Riservato · su colloquio</p>
+          <p class="tn">Oltre</p><h3>Privé</h3><p class="fr">Riservato · su richiesta scritta</p>
           <ul><li>Team dedicato, disponibilità continua</li><li>Progetti speciali e trasferimenti</li><li>Riservatezza rafforzata</li><li>Membri strettamente limitati</li></ul>
-          <button class="btn" data-go="5">Un colloquio privato</button>
+          <button class="btn" data-go="5">Scrivici in privato</button>
         </div>
       </div>
     </div>
@@ -420,15 +421,16 @@ body.started #dots{opacity:1}
       <div class="sec-h a"><p class="kicker">L'ammissione</p><h2>Il primo passo richiede <em>due minuti</em>.<br>L'ultimo lo facciamo noi.</h2></div>
       <div class="apply">
         <div class="a d1">
-          <p class="big">Un colloquio privato di trenta minuti. Nessun impegno, massima discrezione.</p>
-          <p>Ci racconti come vivi le tue giornate; ti mostriamo cosa possiamo sollevarti dalle spalle. Se c'è sintonia — e disponibilità — l'onboarding avviene entro una settimana.</p>
-          <p>Contatto diretto: <a class="mail" href="mailto:prive@margine.it">prive@margine.it</a></p>
+          <p class="big">Scrivici due righe, con calma. Rispondiamo per iscritto, con discrezione, di solito entro poche ore.</p>
+          <p>Ci racconti come vivi le tue giornate e cosa vorresti toglierti dalla testa; ti rispondiamo con una proposta concreta. Tutto via messaggio, senza telefonate: al tuo ritmo.</p>
+          <p>Contatto diretto: <a class="mail" href="https://wa.me/390000000000">WhatsApp</a> · <a class="mail" href="mailto:luca.borrelli09@gmail.com">Email</a></p>
         </div>
         <form class="aform a d2" id="aform">
           <div class="field"><input type="text" id="fn" placeholder=" " required><label for="fn">Nome e cognome</label></div>
           <div class="field"><input type="text" id="fc" placeholder=" " required><label for="fc">Email o telefono</label></div>
+          <p class="form-err" id="ferr">Inserisci un'email valida (es. nome@dominio.it) o un numero di telefono corretto.</p>
           <div class="field"><textarea id="fm" rows="2" placeholder=" "></textarea><label for="fm">Cosa vorresti non dover più pensare?</label></div>
-          <button class="btn" type="submit">Richiedi il colloquio</button>
+          <button class="btn" type="submit">Invia la richiesta</button>
           <p class="form-ok" id="fok">Ricevuto. Ti contatteremo personalmente entro un giorno lavorativo.</p>
         </form>
       </div>
@@ -597,10 +599,28 @@ body.started #dots{opacity:1}
     });
   }
 
-  // ---- Form: invia le richieste via FormSubmit ----
+  // ---- Form: valida il contatto e invia via FormSubmit ----
+  function contattoValido(v){
+    v = v.trim();
+    // email: deve avere @ e un dominio con punto
+    var email = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+    if (email.test(v)) return true;
+    // telefono: solo cifre (ammessi +, spazi, trattini, parentesi), da 8 a 15 cifre
+    var digits = v.replace(/[\s\-\(\)\+\.]/g, '');
+    if (/^\d{8,15}$/.test(digits)) return true;
+    return false;
+  }
   document.getElementById('aform').addEventListener('submit', function(e){
     e.preventDefault();
     var f = e.target;
+    var err = document.getElementById('ferr');
+    var contatto = document.getElementById('fc').value;
+    if (!contattoValido(contatto)){
+      err.style.display = 'block';
+      document.getElementById('fc').focus();
+      return;
+    }
+    err.style.display = 'none';
     var btn = f.querySelector('button[type=submit]');
     btn.disabled = true; btn.textContent = 'Invio in corso…';
     fetch('https://formsubmit.co/ajax/luca.borrelli09@gmail.com', {
@@ -616,7 +636,7 @@ body.started #dots{opacity:1}
       document.getElementById('fok').style.display = 'block';
       btn.textContent = 'Richiesta inviata';
     }).catch(function(){
-      btn.disabled = false; btn.textContent = 'Richiedi il colloquio';
+      btn.disabled = false; btn.textContent = 'Invia la richiesta';
       alert('Invio non riuscito. Riprova o scrivi direttamente via email.');
     });
   });
